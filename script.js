@@ -97,7 +97,7 @@ reveals.forEach(el => revealObserver.observe(el));
 // CONTACT FORM — Basic validation & feedback
 // ─────────────────────────────────────────────
 if (sendBtn) {
-  sendBtn.addEventListener('click', () => {
+  sendBtn.addEventListener('click', async () => {
     const name    = document.getElementById('name');
     const email   = document.getElementById('email');
     const message = document.getElementById('message');
@@ -111,11 +111,7 @@ if (sendBtn) {
         valid = false;
       }
     });
-
-    if (!valid) {
-      shakeBtn(sendBtn);
-      return;
-    }
+    if (!valid) { shakeBtn(sendBtn); return; }
 
     // Email format check
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -125,28 +121,57 @@ if (sendBtn) {
       return;
     }
 
-    // Success state
+    // Sending state
     const originalHTML = sendBtn.innerHTML;
-    sendBtn.innerHTML = `
-      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px">
-        <polyline points="20 6 9 17 4 12"/>
-      </svg>
-      Message Sent!
-    `;
-    sendBtn.style.background = 'linear-gradient(135deg, #4ade80, #22c55e)';
-    sendBtn.style.color = '#0d1a1d';
+    sendBtn.innerHTML = 'Sending…';
     sendBtn.disabled = true;
 
-    // Reset after 3s
-    setTimeout(() => {
-      sendBtn.innerHTML = originalHTML;
-      sendBtn.style.background = '';
-      sendBtn.style.color = '';
-      sendBtn.disabled = false;
-      name.value = '';
-      email.value = '';
-      message.value = '';
-    }, 3000);
+    try {
+      const res = await fetch('https://formspree.io/f/xpqbbpvj', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          name: name.value.trim(),
+          email: email.value.trim(),
+          message: message.value.trim(),
+        }),
+      });
+
+      if (!res.ok) throw new Error('Failed');
+
+      // Success state
+      sendBtn.innerHTML = `
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width:16px;height:16px">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Message Sent!
+      `;
+      sendBtn.style.background = 'linear-gradient(135deg, #4ade80, #22c55e)';
+      sendBtn.style.color = '#0d1a1d';
+
+      setTimeout(() => {
+        sendBtn.innerHTML = originalHTML;
+        sendBtn.style.background = '';
+        sendBtn.style.color = '';
+        sendBtn.disabled = false;
+        name.value = '';
+        email.value = '';
+        message.value = '';
+      }, 3000);
+
+    } catch {
+      // Error state
+      sendBtn.innerHTML = '✕ Failed — try again';
+      sendBtn.style.background = 'rgba(158, 42, 43, 0.7)';
+      sendBtn.style.color = '#fff';
+
+      setTimeout(() => {
+        sendBtn.innerHTML = originalHTML;
+        sendBtn.style.background = '';
+        sendBtn.style.color = '';
+        sendBtn.disabled = false;
+      }, 3000);
+    }
   });
 }
 
