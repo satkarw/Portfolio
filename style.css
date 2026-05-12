@@ -790,6 +790,10 @@ input, textarea { font-family: inherit; font-size: inherit; }
   position: relative;
   overflow: hidden;
   transition: all var(--transition);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .review-card:hover {
@@ -818,6 +822,7 @@ input, textarea { font-family: inherit; font-size: inherit; }
   display: flex;
   align-items: center;
   gap: 0.75rem;
+  
 }
 
 .author-avatar {
@@ -834,6 +839,8 @@ input, textarea { font-family: inherit; font-size: inherit; }
   color: var(--vanilla);
   flex-shrink: 0;
 }
+
+
 
 .author-info {
   flex: 1;
@@ -853,6 +860,7 @@ input, textarea { font-family: inherit; font-size: inherit; }
   font-size: 0.65rem;
   color: var(--text-muted);
   letter-spacing: 0.05em;
+  display: flex;
 }
 
 .review-stars {
@@ -1134,4 +1142,11 @@ input, textarea { font-family: inherit; font-size: inherit; }
   .btn { width: 100%; justify-content: center; }
   .contact-form-wrap { padding: 1.25rem; }
   .skills-grid { grid-template-columns: repeat(3, 1fr); }
+  .review-author div{
+    font-size: 0.3rem;
+
+  }
+
+
 }
+
